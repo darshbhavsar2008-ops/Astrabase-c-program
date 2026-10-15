@@ -1,550 +1,1985 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C Programs | 01–32</title>
+<meta name="theme-color" content="#090b18">
+<meta name="description" content="C Programming Practicals — interactive liquid glass website">
+<title>CodeLab • C Programming Practicals</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
- margin:0;padding:25px;
- font-family:Arial,sans-serif;color:white;
- background:linear-gradient(-45deg,#080817,#241044,#06394a,#40102f);
- background-size:400% 400%;
- animation:bg 15s ease infinite;
+:root {
+  color-scheme: dark;
+  --bg: #080a16;
+  --panel: rgba(255,255,255,.075);
+  --panel-strong: rgba(255,255,255,.115);
+  --line: rgba(255,255,255,.14);
+  --text: #f5f6ff;
+  --muted: #a4abc9;
+  --cyan: #6cf2ff;
+  --violet: #b29bff;
+  --pink: #ff8bd4;
+  --green: #9dffcb;
+  --radius: 24px;
+  --shadow: 0 24px 80px rgba(0,0,0,.28);
 }
-@keyframes bg{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@keyframes gradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-h1{
- text-align:center;font-size:clamp(35px,7vw,70px);
- background:linear-gradient(90deg,#b6a0ff,#65edff,#ff83d5,#ffe18a,#b6a0ff);
- background-size:300%;animation:gradient 7s infinite;
- color:transparent;background-clip:text;-webkit-background-clip:text;
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 24px;
 }
-header{text-align:center;padding:35px 0}
-header p{color:#c5c5df;line-height:1.7}
-nav{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:25px auto}
-nav a{color:white;text-decoration:none;padding:8px 10px;border:1px solid #ffffff30;border-radius:9px;background:#ffffff12;font-size:12px}
-.grid{max-width:1100px;margin:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.card{min-width:0;padding:18px;border:1px solid #ffffff30;border-radius:18px;background:#ffffff12;backdrop-filter:blur(20px);box-shadow:0 15px 40px #0003}
-.card h2{font-size:17px;line-height:1.5;background:linear-gradient(90deg,#c4aaff,#80f3ff,#ffa6dc);background-size:200%;animation:gradient 8s infinite;color:transparent;background-clip:text;-webkit-background-clip:text}
-.tag{color:#90efff;font-size:11px;letter-spacing:2px}
-pre{white-space:pre;overflow:auto;background:#050712d9;padding:14px;border-radius:10px;border:1px solid #ffffff16;color:#e5e9ff;font:12px/1.7 Consolas,monospace}
-button{cursor:pointer;border:0;border-radius:9px;padding:10px 13px;background:linear-gradient(110deg,#b7a0ff,#77eaff);color:#11152a;font-weight:bold}
-.output{margin-top:12px;padding:12px;border:1px solid #65ffc455;background:#002d254d;border-radius:10px;color:#9dffd9}
-.output pre{color:#9dffd9}
-footer{text-align:center;padding:30px;color:#c4c4de}
-@media(max-width:700px){body{padding:13px}.grid{grid-template-columns:1fr}.card{padding:14px}}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background: var(--bg);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(108,242,255,.12), transparent 35%),
+    radial-gradient(ellipse at 85% 25%, rgba(178,155,255,.15), transparent 38%),
+    radial-gradient(ellipse at 55% 85%, rgba(255,139,212,.10), transparent 38%),
+    #080a16;
+  background-size: 160% 160%;
+  animation: backgroundFlow 18s ease-in-out infinite alternate;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: .12;
+  background-image: radial-gradient(rgba(255,255,255,.6) .6px, transparent .6px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
+}
+
+.ambient-orb {
+  position: fixed;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: .16;
+  pointer-events: none;
+  z-index: -1;
+  animation: orbFloat 16s ease-in-out infinite alternate;
+}
+
+.orb-one {
+  background: var(--cyan);
+  top: 10%;
+  left: -130px;
+}
+
+.orb-two {
+  background: var(--pink);
+  right: -130px;
+  bottom: 8%;
+  animation-delay: -5s;
+}
+
+@keyframes backgroundFlow {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 20% 100%; }
+}
+
+@keyframes orbFloat {
+  from { transform: translate3d(0,0,0) scale(1); }
+  to { transform: translate3d(70px,-50px,0) scale(1.2); }
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% center; }
+  100% { background-position: 250% center; }
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(28px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes borderOrbit {
+  from { background-position: 0% center; }
+  to { background-position: 220% center; }
+}
+
+@keyframes scanline {
+  from { transform: translateX(-150%); }
+  to { transform: translateX(450%); }
+}
+
+@keyframes softPulse {
+  0%,100% { box-shadow: 0 24px 80px rgba(0,0,0,.28); }
+  50% { box-shadow: 0 24px 90px rgba(108,242,255,.07); }
+}
+
+@keyframes floatSymbol {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+.page-shell {
+  width: min(1440px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.glass {
+  background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  letter-spacing: -.04em;
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #09101d;
+  background: linear-gradient(135deg, var(--cyan), var(--violet), var(--pink));
+  box-shadow: 0 0 28px rgba(108,242,255,.25);
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+}
+
+.brand span:last-child { color: #d8dcf8; }
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 13px;
+  color: var(--muted);
+  font-size: .82rem;
+  background: rgba(255,255,255,.045);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+}
+
+.hero {
+  position: relative;
+  padding: clamp(30px, 6vw, 82px) 0 34px;
+}
+
+.hero-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+  padding: clamp(28px, 6vw, 74px);
+  isolation: isolate;
+  animation: softPulse 8s ease-in-out infinite;
+}
+
+.hero-card::before {
+  content: "";
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  right: -80px;
+  top: -120px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 50%;
+  box-shadow: 0 0 0 32px rgba(255,255,255,.025),
+              0 0 0 64px rgba(255,255,255,.02);
+  animation: floatSymbol 11s ease-in-out infinite;
+  z-index: -1;
+}
+
+.hero-card::after {
+  content: "</>";
+  position: absolute;
+  right: clamp(24px, 7vw, 90px);
+  bottom: 22px;
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(3rem, 9vw, 8rem);
+  color: rgba(255,255,255,.045);
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: .17em;
+  font-size: .72rem;
+  font-weight: 700;
+  animation: riseIn .8s both;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+}
+
+.hero h1 {
+  max-width: 800px;
+  margin: 20px 0 18px;
+  font-size: clamp(2.6rem, 7vw, 6.1rem);
+  line-height: .99;
+  letter-spacing: -.075em;
+  animation: riseIn .8s .08s both;
+}
+
+.gradient-text {
+  color: transparent;
+  background: linear-gradient(90deg, #fff 0%, var(--cyan) 25%, var(--violet) 55%, var(--pink) 80%, #fff 100%);
+  background-size: 250% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: gradientFlow 8s ease infinite;
+}
+
+.hero-copy {
+  max-width: 610px;
+  color: var(--muted);
+  line-height: 1.75;
+  font-size: clamp(.95rem, 1.5vw, 1.12rem);
+  animation: riseIn .8s .16s both;
+}
+
+.hero-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.metric {
+  min-width: 124px;
+  padding: 14px 17px;
+  border-radius: 17px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.045);
+  transition: transform .3s, border-color .3s, background .3s;
+}
+
+.metric:hover {
+  transform: translateY(-5px) scale(1.025);
+  border-color: rgba(108,242,255,.35);
+  background: rgba(255,255,255,.075);
+}
+
+.metric strong {
+  display: block;
+  font-size: 1.45rem;
+  letter-spacing: -.05em;
+}
+
+.metric span {
+  display: block;
+  color: var(--muted);
+  font-size: .76rem;
+  margin-top: 3px;
+}
 </style>
 </head>
+<body id="top">
+<div class="ambient-orb orb-one"></div>
+<div class="ambient-orb orb-two"></div>
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="CodeLab home">
+      <span class="brand-mark">C/</span>
+      <span>CodeLab <span style="color:var(--cyan)">Practical</span></span>
+    </a>
+    <div class="top-actions">
+      <span class="pill"><span class="status-dot"></span> Offline-friendly page</span>
+      <span class="pill">C language · Dev-C++</span>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-card glass">
+        <div class="eyebrow">Your practical notebook, reimagined</div>
+        <h1><span class="gradient-text">Think in C.</span><br>Build the basics.</h1>
+        <p class="hero-copy">A liquid-glass home for your programming practicals. Explore your questions, copy the C code, and reveal sample outputs.</p>
+        <div class="hero-metrics">
+          <div class="metric"><strong id="totalMetric">38</strong><span>practical programs</span></div>
+          <div class="metric"><strong>01–38</strong><span>your practical list</span></div>
+          <div class="metric"><strong>100%</strong><span>single-page access</span></div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Find programs">
+      <div class="toolbar">
+        <label class="search-wrap glass">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="Search by program, topic, or number…" aria-label="Search programs">
+        </label>
+        <div class="toolbar-actions">
+          <button class="action-btn" id="expandAll">Show all outputs</button>
+          <button class="action-btn" id="collapseAll">Hide outputs</button>
+        </div>
+      </div>
+      <nav class="filters" id="filters" aria-label="Filter by category"></nav>
+      <div class="section-heading">
+        <div>
+          <h2>Practical library <span class="gradient-text">/ source code</span></h2>
+          <p>Search, copy, and review your C practicals.</p>
+        </div>
+        <span class="results-count" id="resultsCount">38 programs</span>
+      </div>
+      <div class="program-grid" id="programGrid"></div>
+      <div class="empty-state glass" id="emptyState">
+        <strong>No programs found</strong>
+        <p>Try another keyword or category.</p>
+        <button class="action-btn" id="clearSearch">Clear search</button>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <span><strong>CodeLab Practical</strong> · Made for learning C</span>
+    <a class="back-top" href="#top">Back to top ↑</a>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<body>
-<header>
-<h1>C PROGRAMS 01–32</h1>
-<p>First Semester Practical Collection<br>
-Classic C • printf • scanf • Conditions • Loops • Arrays</p>
-<p>✦ Animated Gradients · Liquid Glass · Sample Outputs ✦</p>
-</header>
+<style>
+/* ===== INTERACTIVE TOOLBAR ===== */
+.toolbar {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin: 20px 0 15px;
+}
 
-<nav id="nav"></nav>
-<main class="grid" id="programs"></main>
-<footer>✦ C PRACTICALS · ALL 32 PROGRAMS ✦</footer>
+.search-wrap {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 18px;
+  padding: 0 18px;
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+
+.search-wrap:focus-within {
+  border-color: rgba(108,242,255,.5);
+  box-shadow: 0 0 0 4px rgba(108,242,255,.06);
+  transform: translateY(-2px);
+}
+
+.search-icon {
+  color: var(--cyan);
+  font-size: 1.5rem;
+}
+
+.search-wrap input {
+  width: 100%;
+  min-width: 0;
+  padding: 18px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: .93rem;
+}
+
+.search-wrap input::placeholder {
+  color: #858baa;
+}
+
+.toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.action-btn {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 15px;
+  color: var(--text);
+  background: rgba(255,255,255,.06);
+  transition: background .25s, transform .25s, border-color .25s;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(108,242,255,.1);
+  border-color: rgba(108,242,255,.4);
+}
+
+.action-btn:active {
+  transform: scale(.97);
+}
+
+.filters {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 8px 2px 18px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.2) transparent;
+}
+
+.filter-btn {
+  flex: 0 0 auto;
+  padding: 9px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255,255,255,.035);
+  font-size: .82rem;
+  transition: color .25s, background .25s, border-color .25s, transform .25s;
+}
+
+.filter-btn:hover {
+  transform: translateY(-2px);
+  color: white;
+}
+
+.filter-btn.active {
+  color: #09101d;
+  border-color: transparent;
+  background: linear-gradient(110deg, var(--cyan), var(--violet));
+  font-weight: 700;
+  box-shadow: 0 5px 25px rgba(108,242,255,.13);
+}
+
+/* ===== SECTION HEADING ===== */
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin: 25px 0 20px;
+}
+
+.section-heading h2 {
+  font-size: clamp(1.55rem, 3vw, 2.35rem);
+  line-height: 1.15;
+  letter-spacing: -.055em;
+  margin: 0 0 8px;
+}
+
+.section-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.results-count {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--line);
+  color: var(--cyan);
+  font-size: .78rem;
+}
+
+/* ===== PROGRAM CARDS ===== */
+.program-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+  align-items: start;
+  padding-bottom: 42px;
+}
+
+.program-card {
+  --card-accent: var(--cyan);
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 21px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.025));
+  box-shadow: 0 12px 38px rgba(0,0,0,.13);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  transition:
+    transform .35s cubic-bezier(.2,.75,.2,1),
+    border-color .35s,
+    background .35s,
+    box-shadow .35s;
+  animation: cardEnter .7s both;
+}
+
+.program-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
+  opacity: .7;
+}
+
+.program-card::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -75px;
+  top: -75px;
+  border-radius: 50%;
+  background: var(--card-accent);
+  opacity: .07;
+  filter: blur(35px);
+  pointer-events: none;
+  transition: opacity .3s, transform .3s;
+}
+
+.program-card:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--card-accent) 42%, transparent);
+  background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+  box-shadow: 0 25px 65px rgba(0,0,0,.25);
+}
+
+.program-card:hover::after {
+  opacity: .2;
+  transform: scale(1.4);
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin-bottom: 15px;
+}
+
+.program-number {
+  display: grid;
+  place-items: center;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 30%, transparent);
+  background: color-mix(in srgb, var(--card-accent) 10%, transparent);
+  color: var(--card-accent);
+  font-family: 'DM Mono', monospace;
+  font-size: .86rem;
+  transition: transform .35s, box-shadow .35s;
+}
+
+.program-card:hover .program-number {
+  transform: rotate(-5deg) scale(1.06);
+  box-shadow: 0 0 25px color-mix(in srgb, var(--card-accent) 16%, transparent);
+}
+
+.card-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  margin: 1px 0 8px;
+  font-size: 1.06rem;
+  line-height: 1.35;
+  letter-spacing: -.025em;
+  overflow-wrap: anywhere;
+}
+
+.card-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--card-accent);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .035em;
+}
+
+.card-category::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.card-description {
+  color: var(--muted);
+  font-size: .86rem;
+  line-height: 1.65;
+  margin: 0 0 15px;
+}
+
+.code-panel {
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 15px;
+  background: rgba(2,5,14,.7);
+}
+
+.code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.075);
+  background: rgba(255,255,255,.025);
+}
+
+.window-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.window-dots i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.window-dots i:nth-child(1) { background: #ff7185; }
+.window-dots i:nth-child(2) { background: #ffd166; }
+.window-dots i:nth-child(3) { background: #75e6a8; }
+
+.code-label {
+  color: #8d95b6;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.055);
+  color: #cbd1ed;
+  font-size: .7rem;
+  transition: background .2s, color .2s;
+}
+
+.copy-btn:hover {
+  color: var(--cyan);
+  background: rgba(108,242,255,.09);
+}
+
+.copy-btn.copied {
+  color: var(--green);
+}
+
+.code-content {
+  display: block;
+  max-height: 340px;
+  overflow: auto;
+  padding: 15px;
+  color: #dce5ff;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+  line-height: 1.8;
+  white-space: pre;
+  tab-size: 4;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.17) transparent;
+}
+
+.code-content::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.code-content::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.2);
+  border-radius: 99px;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.output-btn {
+  flex: 1;
+  min-width: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid rgba(108,242,255,.25);
+  color: var(--cyan);
+  background: rgba(108,242,255,.065);
+  font-size: .8rem;
+  font-weight: 600;
+  transition: transform .25s, background .25s, border-color .25s;
+}
+
+.output-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(108,242,255,.12);
+  border-color: rgba(108,242,255,.5);
+}
+
+.output-btn .arrow {
+  display: inline-block;
+  transition: transform .25s;
+}
+
+.output-btn[aria-expanded="true"] .arrow {
+  transform: rotate(180deg);
+}
+
+.output-panel {
+  display: none;
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(157,255,203,.2);
+  border-radius: 13px;
+  background: rgba(157,255,203,.045);
+  animation: riseIn .35s both;
+}
+
+.output-panel.open {
+  display: block;
+}
+
+.output-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  border-bottom: 1px solid rgba(157,255,203,.12);
+  color: var(--green);
+  font-size: .74rem;
+  font-weight: 600;
+}
+
+.output-head::before {
+  content: "●";
+  font-size: .6rem;
+}
+
+.output-content {
+  margin: 0;
+  padding: 14px;
+  color: #c6f8d9;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.empty-state {
+  display: none;
+  text-align: center;
+  border-radius: var(--radius);
+  padding: 55px 20px;
+  margin-bottom: 40px;
+}
+
+.empty-state.show {
+  display: block;
+  animation: riseIn .4s both;
+}
+
+.empty-state strong {
+  display: block;
+  font-size: 1.3rem;
+}
+
+.empty-state p {
+  color: var(--muted);
+  margin: 8px 0 18px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding: 25px 0 35px;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.footer strong {
+  color: var(--text);
+}
+
+.back-top {
+  text-decoration: none;
+  color: var(--cyan);
+  transition: opacity .2s;
+}
+
+.back-top:hover { opacity: .7; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 25px;
+  z-index: 50;
+  max-width: calc(100% - 32px);
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid rgba(108,242,255,.3);
+  border-radius: 999px;
+  padding: 12px 18px;
+  color: var(--text);
+  background: rgba(15,20,40,.88);
+  box-shadow: 0 10px 40px rgba(0,0,0,.35);
+  backdrop-filter: blur(20px);
+  font-size: .83rem;
+  transition: opacity .25s, transform .25s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+  box-shadow: 0 0 12px rgba(108,242,255,.5);
+}
+
+@media (max-width: 760px) {
+  .page-shell { width: min(100% - 26px, 650px); }
+  .topbar { padding: 16px 0; }
+  .top-actions .pill:last-child { display: none; }
+  .hero { padding-top: 25px; }
+  .hero-card { border-radius: 26px; }
+  .hero-card::before { width: 200px; height: 200px; right: -80px; }
+  .hero-metrics { gap: 8px; }
+  .metric { min-width: calc(33.333% - 8px); flex: 1; padding: 12px; }
+  .metric strong { font-size: 1.2rem; }
+  .toolbar { flex-direction: column; }
+  .toolbar-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .action-btn { padding: 11px 9px; font-size: .78rem; }
+  .program-grid { grid-template-columns: minmax(0, 1fr); gap: 13px; }
+  .program-card { padding: 16px; border-radius: 20px; }
+  .section-heading { align-items: start; }
+  .results-count { font-size: .7rem; }
+}
+
+@media (max-width: 390px) {
+  .page-shell { width: calc(100% - 20px); }
+  .brand { font-size: .95rem; }
+  .brand-mark { width: 36px; height: 36px; }
+  .top-actions .pill { font-size: .7rem; padding: 8px 9px; }
+  .metric { min-width: calc(50% - 8px); }
+  .hero h1 { font-size: 2.6rem; }
+  .card-head { gap: 10px; }
+  .program-number { flex-basis: 40px; width: 40px; height: 40px; }
+  .card-title { font-size: .98rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <script>
-var data = [
-["Print a message","Basic I/O",`#include <stdio.h>
-int main(){
+const programs = [
+  {
+    number: 1,
+    title: "Print a Message",
+    category: "Basics",
+    description: "Display a message on the screen using printf().",
+    code: `#include <stdio.h>
+
+int main()
+{
     printf("Hello World");
     return 0;
-}`,`Hello World`],
+}`,
+    output: `Hello World`
+  },
+  {
+    number: 2,
+    title: "Average of Five Numbers",
+    category: "Basics",
+    description: "Read five values and calculate their average.",
+    code: `#include <stdio.h>
 
-["Average of five numbers","Basic I/O",`#include <stdio.h>
-int main(){
-    float a,b,c,d,e;
-    printf("Enter five numbers: ");
-    scanf("%f%f%f%f%f",&a,&b,&c,&d,&e);
-    printf("Average = %.2f",(a+b+c+d+e)/5);
+int main()
+{
+    float a, b, c, d, e, avg;
+    scanf("%f%f%f%f%f", &a, &b, &c, &d, &e);
+    avg = (a + b + c + d + e) / 5;
+    printf("Average = %.2f", avg);
     return 0;
-}`,`Enter five numbers: 10 20 30 40 50
-Average = 30.00`],
+}`,
+    output: `Input: 10 20 30 40 50
+Average = 30.00`
+  },
+  {
+    number: 3,
+    title: "Area of a Circle",
+    category: "Basics",
+    description: "Calculate the area using the radius.",
+    code: `#include <stdio.h>
 
-["Area of circle","Math",`#include <stdio.h>
-int main(){
-    float r;
-    printf("Enter radius: ");
-    scanf("%f",&r);
-    printf("Area = %.2f",3.14159*r*r);
+int main()
+{
+    float r, area;
+    scanf("%f", &r);
+    area = 3.14 * r * r;
+    printf("Area = %.2f", area);
     return 0;
-}`,`Enter radius: 2
-Area = 12.57`],
+}`,
+    output: `Input: 5
+Area = 78.50`
+  },
+  {
+    number: 4,
+    title: "Years to Minutes",
+    category: "Basics",
+    description: "Convert years into minutes using 365 days per year.",
+    code: `#include <stdio.h>
 
-["Convert years into minutes","Math",`#include <stdio.h>
-int main(){
-    int years;
-    printf("Enter years: ");
-    scanf("%d",&years);
-    printf("Minutes = %d",years*365*24*60);
+int main()
+{
+    int years, minutes;
+    scanf("%d", &years);
+    minutes = years * 365 * 24 * 60;
+    printf("Minutes = %d", minutes);
     return 0;
-}`,`Enter years: 1
-Minutes = 525600`],
+}`,
+    output: `Input: 1
+Minutes = 525600`
+  },
+  {
+    number: 5,
+    title: "Arithmetic Operations",
+    category: "Operators",
+    description: "Perform addition, subtraction, multiplication and division.",
+    code: `#include <stdio.h>
 
-["Arithmetic operations","Operators",`#include <stdio.h>
-int main(){
-    int a,b;
-    printf("Enter two numbers: ");
-    scanf("%d%d",&a,&b);
-    printf("Addition = %d\\n",a+b);
-    printf("Subtraction = %d\\n",a-b);
-    printf("Multiplication = %d\\n",a*b);
-    if(b!=0)
-        printf("Division = %.2f",(float)a/b);
+int main()
+{
+    int a, b;
+    scanf("%d%d", &a, &b);
+    printf("Addition = %d\\n", a + b);
+    printf("Subtraction = %d\\n", a - b);
+    printf("Multiplication = %d\\n", a * b);
+    if (b != 0)
+        printf("Division = %.2f", (float)a / b);
     else
-        printf("Cannot divide by zero");
+        printf("Division is not possible");
     return 0;
-}`,`Enter two numbers: 10 2
+}`,
+    output: `Input: 10 2
 Addition = 12
 Subtraction = 8
 Multiplication = 20
-Division = 5.00`],
+Division = 5.00`
+  },
+  {
+    number: 6,
+    title: "Display a Character",
+    category: "Basics",
+    description: "Read and display a character.",
+    code: `#include <stdio.h>
 
-["Display a character","Basic I/O",`#include <stdio.h>
-int main(){
+int main()
+{
     char ch;
-    printf("Enter character: ");
-    scanf(" %c",&ch);
-    printf("Character = %c",ch);
+    scanf(" %c", &ch);
+    printf("Character = %c", ch);
     return 0;
-}`,`Enter character: A
-Character = A`],
+}`,
+    output: `Input: A
+Character = A`
+  },
+  {
+    number: 7,
+    title: "Lowercase to Uppercase",
+    category: "Strings",
+    description: "Convert a lowercase character into uppercase.",
+    code: `#include <stdio.h>
 
-["Lowercase to uppercase","Characters",`#include <stdio.h>
-int main(){
+int main()
+{
     char ch;
-    printf("Enter lowercase letter: ");
-    scanf(" %c",&ch);
-    if(ch>='a' && ch<='z')
-        printf("Uppercase = %c",ch-32);
-    else
-        printf("Not a lowercase letter");
+    scanf("%c", &ch);
+    if (ch >= 'a' && ch <= 'z')
+        ch = ch - 32;
+    printf("%c", ch);
     return 0;
-}`,`Enter lowercase letter: b
-Uppercase = B`],
+}`,
+    output: `Input: b
+B`
+  },
+  {
+    number: 8,
+    title: "Swap Using a Temporary Variable",
+    category: "Basics",
+    description: "Exchange two values using a third variable.",
+    code: `#include <stdio.h>
 
-["Swap using third variable","Basic I/O",`#include <stdio.h>
-int main(){
-    int a,b,temp;
-    printf("Enter two numbers: ");
-    scanf("%d%d",&a,&b);
-    temp=a;
-    a=b;
-    b=temp;
-    printf("a=%d b=%d",a,b);
+int main()
+{
+    int a, b, temp;
+    scanf("%d%d", &a, &b);
+    temp = a;
+    a = b;
+    b = temp;
+    printf("a = %d, b = %d", a, b);
     return 0;
-}`,`Enter two numbers: 4 9
-a=9 b=4`],
+}`,
+    output: `Input: 10 20
+a = 20, b = 10`
+  },
+  {
+    number: 9,
+    title: "Swap Without a Temporary Variable",
+    category: "Basics",
+    description: "Exchange two integers using arithmetic.",
+    code: `#include <stdio.h>
 
-["Swap without third variable","Basic I/O",`#include <stdio.h>
-int main(){
-    int a,b;
-    printf("Enter two numbers: ");
-    scanf("%d%d",&a,&b);
-    a=a^b;
-    b=a^b;
-    a=a^b;
-    printf("a=%d b=%d",a,b);
+int main()
+{
+    int a, b;
+    scanf("%d%d", &a, &b);
+    a = a + b;
+    b = a - b;
+    a = a - b;
+    printf("a = %d, b = %d", a, b);
     return 0;
-}`,`Enter two numbers: 4 9
-a=9 b=4`],
+}`,
+    output: `Input: 5 9
+a = 9, b = 5`
+  },
+  {
+    number: 10,
+    title: "Maximum and Minimum",
+    category: "Conditions",
+    description: "Find the larger and smaller values using the conditional operator.",
+    code: `#include <stdio.h>
 
-["Maximum and minimum","Conditions",`#include <stdio.h>
-int main(){
-    int a,b;
-    printf("Enter two numbers: ");
-    scanf("%d%d",&a,&b);
-    printf("Maximum = %d\\n",(a>b)?a:b);
-    printf("Minimum = %d",(a<b)?a:b);
+int main()
+{
+    int a, b, max, min;
+    scanf("%d%d", &a, &b);
+    max = (a > b) ? a : b;
+    min = (a < b) ? a : b;
+    printf("Maximum = %d\\nMinimum = %d", max, min);
     return 0;
-}`,`Enter two numbers: 8 3
-Maximum = 8
-Minimum = 3`],
+}`,
+    output: `Input: 12 7
+Maximum = 12
+Minimum = 7`
+  },
+  {
+    number: 11,
+    title: "Bitwise Operators",
+    category: "Operators",
+    description: "Demonstrate AND, OR, XOR, left shift and right shift.",
+    code: `#include <stdio.h>
 
-["Bitwise operators","Operators",`#include <stdio.h>
-int main(){
-    int a,b;
-    printf("Enter two numbers: ");
-    scanf("%d%d",&a,&b);
-    printf("AND = %d\\n",a&b);
-    printf("OR = %d\\n",a|b);
-    printf("XOR = %d",a^b);
+int main()
+{
+    int a = 5, b = 3;
+    printf("AND = %d\\n", a & b);
+    printf("OR = %d\\n", a | b);
+    printf("XOR = %d\\n", a ^ b);
+    printf("Left shift = %d\\n", a << 1);
+    printf("Right shift = %d\\n", a >> 1);
     return 0;
-}`,`Enter two numbers: 5 3
-AND = 1
+}`,
+    output: `AND = 1
 OR = 7
-XOR = 6`],
+XOR = 6
+Left shift = 10
+Right shift = 2`
+  },
+  {
+    number: 12,
+    title: "Odd or Even",
+    category: "Conditions",
+    description: "Check whether an integer is odd or even.",
+    code: `#include <stdio.h>
 
-["Odd or even","If-else",`#include <stdio.h>
-int main(){
+int main()
+{
     int n;
-    printf("Enter number: ");
-    scanf("%d",&n);
-    if(n%2==0)
-        printf("Even number");
+    scanf("%d", &n);
+    if (n % 2 == 0)
+        printf("Even");
     else
-        printf("Odd number");
+        printf("Odd");
     return 0;
-}`,`Enter number: 7
-Odd number`],
+}`,
+    output: `Input: 8
+Even`
+  },
+  {
+    number: 13,
+    title: "Alphabet, Digit or Symbol",
+    category: "Conditions",
+    description: "Classify an input character.",
+    code: `#include <stdio.h>
 
-["Alphabet, digit or symbol","If-else",`#include <stdio.h>
-int main(){
+int main()
+{
     char ch;
-    printf("Enter character: ");
-    scanf(" %c",&ch);
-    if((ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z'))
+    scanf("%c", &ch);
+    if ((ch >= 'A' && ch <= 'Z') ||
+        (ch >= 'a' && ch <= 'z'))
         printf("Alphabet");
-    else if(ch>='0'&&ch<='9')
+    else if (ch >= '0' && ch <= '9')
         printf("Digit");
     else
-        printf("Special symbol");
+        printf("Symbol");
     return 0;
-}`,`Enter character: 7
-Digit`],
+}`,
+    output: `Input: 7
+Digit`
+  },
+  {
+    number: 14,
+    title: "Leap Year",
+    category: "Conditions",
+    description: "Check whether a year is a leap year.",
+    code: `#include <stdio.h>
 
-["Leap year","Conditions",`#include <stdio.h>
-int main(){
+int main()
+{
     int year;
-    printf("Enter year: ");
-    scanf("%d",&year);
-    if(year%400==0||(year%4==0&&year%100!=0))
+    scanf("%d", &year);
+    if (year % 400 == 0 ||
+        (year % 4 == 0 && year % 100 != 0))
         printf("Leap year");
     else
         printf("Not a leap year");
     return 0;
-}`,`Enter year: 2024
-Leap year`],
+}`,
+    output: `Input: 2024
+Leap year`
+  },
+  {
+    number: 15,
+    title: "Days in a Month",
+    category: "Conditions",
+    description: "Find the number of days using switch.",
+    code: `#include <stdio.h>
 
-["Days in a month","Switch",`#include <stdio.h>
-int main(){
-    int m;
-    printf("Enter month (1-12): ");
-    scanf("%d",&m);
-    switch(m){
-        case 1:case 3:case 5:case 7:case 8:case 10:case 12:
-            printf("31 days");break;
-        case 4:case 6:case 9:case 11:
-            printf("30 days");break;
-        case 2:printf("28 or 29 days");break;
-        default:printf("Invalid month");
-    }
-    return 0;
-}`,`Enter month (1-12): 4
-30 days`],
-
-["Vowel or consonant","Switch",`#include <stdio.h>
-int main(){
-    char ch;
-    printf("Enter letter: ");
-    scanf(" %c",&ch);
-    if(ch>='A'&&ch<='Z') ch=ch+32;
-    switch(ch){
-        case 'a':case 'e':case 'i':case 'o':case 'u':
-            printf("Vowel");break;
+int main()
+{
+    int month;
+    scanf("%d", &month);
+    switch (month)
+    {
+        case 1: case 3: case 5: case 7:
+        case 8: case 10: case 12:
+            printf("31 days"); break;
+        case 4: case 6: case 9: case 11:
+            printf("30 days"); break;
+        case 2:
+            printf("28 or 29 days"); break;
         default:
-            if(ch>='a'&&ch<='z') printf("Consonant");
-            else printf("Not a letter");
+            printf("Invalid month");
     }
     return 0;
-}`,`Enter letter: e
-Vowel`],
+}`,
+    output: `Input: 2
+28 or 29 days`
+  },
+  {
+    number: 16,
+    title: "Vowel or Consonant",
+    category: "Conditions",
+    description: "Identify whether an alphabet character is a vowel.",
+    code: `#include <stdio.h>
 
-["Maximum of three numbers","If-else",`#include <stdio.h>
-int main(){
-    int a,b,c;
-    printf("Enter three numbers: ");
-    scanf("%d%d%d",&a,&b,&c);
-    if(a>=b&&a>=c) printf("Maximum = %d",a);
-    else if(b>=a&&b>=c) printf("Maximum = %d",b);
-    else printf("Maximum = %d",c);
+int main()
+{
+    char ch;
+    scanf(" %c", &ch);
+    switch (ch)
+    {
+        case 'a': case 'e': case 'i':
+        case 'o': case 'u':
+        case 'A': case 'E': case 'I':
+        case 'O': case 'U':
+            printf("Vowel"); break;
+        default:
+            printf("Consonant");
+    }
     return 0;
-}`,`Enter three numbers: 5 12 8
-Maximum = 12`],
+}`,
+    output: `Input: e
+Vowel`
+  },
+  {
+    number: 17,
+    title: "Maximum of Three Numbers",
+    category: "Conditions",
+    description: "Find the greatest of three numbers using if-else.",
+    code: `#include <stdio.h>
 
-["Grade from marks","If-else",`#include <stdio.h>
-int main(){
+int main()
+{
+    int a, b, c;
+    scanf("%d%d%d", &a, &b, &c);
+    if (a >= b && a >= c)
+        printf("Maximum = %d", a);
+    else if (b >= a && b >= c)
+        printf("Maximum = %d", b);
+    else
+        printf("Maximum = %d", c);
+    return 0;
+}`,
+    output: `Input: 10 25 15
+Maximum = 25`
+  },
+  {
+    number: 18,
+    title: "Grade from Marks",
+    category: "Conditions",
+    description: "Assign a grade according to the marks entered.",
+    code: `#include <stdio.h>
+
+int main()
+{
     int marks;
-    printf("Enter marks: ");
-    scanf("%d",&marks);
-    if(marks<0||marks>100) printf("Invalid marks");
-    else if(marks>=90) printf("Grade A");
-    else if(marks>=80) printf("Grade B");
-    else if(marks>=70) printf("Grade C");
-    else if(marks>=60) printf("Grade D");
-    else if(marks>=40) printf("Grade E");
-    else printf("Fail");
+    scanf("%d", &marks);
+    if (marks >= 80)
+        printf("Grade A");
+    else if (marks >= 60)
+        printf("Grade B");
+    else if (marks >= 40)
+        printf("Grade C");
+    else
+        printf("Fail");
     return 0;
-}`,`Enter marks: 85
-Grade B`],
+}`,
+    output: `Input: 75
+Grade B`
+  },
+  {
+    number: 19,
+    title: "Print 1 to 10 Using goto",
+    category: "Loops",
+    description: "Print integers from 1 through 10 using a goto statement.",
+    code: `#include <stdio.h>
 
-["Print 1 to 10 using goto","Goto",`#include <stdio.h>
-int main(){
-    int i=1;
+int main()
+{
+    int i = 1;
 start:
-    if(i<=10){
-        printf("%d ",i);
+    printf("%d ", i);
+    i++;
+    if (i <= 10)
+        goto start;
+    return 0;
+}`,
+    output: `1 2 3 4 5 6 7 8 9 10`
+  },
+  {
+    number: 20,
+    title: "Sum of First n Integers Using goto",
+    category: "Loops",
+    description: "Calculate the sum of the first n positive integers.",
+    code: `#include <stdio.h>
+
+int main()
+{
+    int n, i = 1, sum = 0;
+    scanf("%d", &n);
+start:
+    if (i <= n)
+    {
+        sum += i;
         i++;
         goto start;
     }
+    printf("Sum = %d", sum);
     return 0;
-}`,`1 2 3 4 5 6 7 8 9 10`],
+}`,
+    output: `Input: 5
+Sum = 15`
+  },
+  {
+    number: 21,
+    title: "Reverse a Number",
+    category: "Loops",
+    description: "Reverse the digits of an integer.",
+    code: `#include <stdio.h>
 
-["Sum of first n integers using goto","Goto",`#include <stdio.h>
-int main(){
-    int n,i=1,sum=0;
-    printf("Enter n: ");
-    scanf("%d",&n);
-start:
-    if(i<=n){
-        sum=sum+i;
-        i++;
-        goto start;
+int main()
+{
+    int n, rem, rev = 0;
+    scanf("%d", &n);
+    while (n != 0)
+    {
+        rem = n % 10;
+        rev = rev * 10 + rem;
+        n /= 10;
     }
-    printf("Sum = %d",sum);
+    printf("Reverse = %d", rev);
     return 0;
-}`,`Enter n: 5
-Sum = 15`],
+}`,
+    output: `Input: 1234
+Reverse = 4321`
+  },
+  {
+    number: 22,
+    title: "Armstrong Number",
+    category: "Loops",
+    description: "Check a three-digit Armstrong number.",
+    code: `#include <stdio.h>
 
-["Reverse a number","While loop",`#include <stdio.h>
-int main(){
-    int n,rev=0,digit;
-    printf("Enter number: ");
-    scanf("%d",&n);
-    while(n!=0){
-        digit=n%10;
-        rev=rev*10+digit;
-        n=n/10;
+int main()
+{
+    int n, original, rem, sum = 0;
+    scanf("%d", &n);
+    original = n;
+    while (n != 0)
+    {
+        rem = n % 10;
+        sum += rem * rem * rem;
+        n /= 10;
     }
-    printf("Reverse = %d",rev);
+    if (sum == original)
+        printf("Armstrong number");
+    else
+        printf("Not an Armstrong number");
     return 0;
-}`,`Enter number: 123
-Reverse = 321`],
+}`,
+    output: `Input: 153
+Armstrong number`
+  },
+  {
+    number: 23,
+    title: "Palindrome Number",
+    category: "Loops",
+    description: "Check whether a number reads the same backward.",
+    code: `#include <stdio.h>
 
-["Armstrong number","Loops",`#include <stdio.h>
-int main(){
-    int n,temp,digit,sum=0;
-    printf("Enter a three-digit number: ");
-    scanf("%d",&n);
-    temp=n;
-    while(temp!=0){
-        digit=temp%10;
-        sum=sum+digit*digit*digit;
-        temp=temp/10;
+int main()
+{
+    int n, original, rem, rev = 0;
+    scanf("%d", &n);
+    original = n;
+    while (n != 0)
+    {
+        rem = n % 10;
+        rev = rev * 10 + rem;
+        n /= 10;
     }
-    if(sum==n) printf("Armstrong number");
-    else printf("Not an Armstrong number");
+    if (original == rev)
+        printf("Palindrome");
+    else
+        printf("Not a palindrome");
     return 0;
-}`,`Enter a three-digit number: 153
-Armstrong number`],
+}`,
+    output: `Input: 121
+Palindrome`
+  },
+  {
+    number: 24,
+    title: "Factorial",
+    category: "Loops",
+    description: "Calculate the factorial of a non-negative integer.",
+    code: `#include <stdio.h>
 
-["Palindrome number","While loop",`#include <stdio.h>
-int main(){
-    int n,temp,rev=0,digit;
-    printf("Enter number: ");
-    scanf("%d",&n);
-    temp=n;
-    while(temp>0){
-        digit=temp%10;
-        rev=rev*10+digit;
-        temp=temp/10;
+int main()
+{
+    int n, i;
+    unsigned long long fact = 1;
+    scanf("%d", &n);
+    if (n < 0)
+        printf("Invalid input");
+    else
+    {
+        for (i = 1; i <= n; i++)
+            fact *= i;
+        printf("Factorial = %llu", fact);
     }
-    if(n==rev) printf("Palindrome number");
-    else printf("Not a palindrome number");
     return 0;
-}`,`Enter number: 121
-Palindrome number`],
+}`,
+    output: `Input: 5
+Factorial = 120`
+  },
+  {
+    number: 25,
+    title: "Prime Number",
+    category: "Loops",
+    description: "Check whether an integer is prime.",
+    code: `#include <stdio.h>
 
-["Factorial using for loop","For loop",`#include <stdio.h>
-int main(){
-    int n,i;
-    long long fact=1;
-    printf("Enter number (0-20): ");
-    scanf("%d",&n);
-    if(n<0||n>20){
-        printf("Enter a number from 0 to 20");
-        return 0;
-    }
-    for(i=1;i<=n;i++)
-        fact=fact*i;
-    printf("Factorial = %lld",fact);
+int main()
+{
+    int n, i, prime = 1;
+    scanf("%d", &n);
+    if (n < 2)
+        prime = 0;
+    for (i = 2; i <= n / i; i++)
+        if (n % i == 0)
+        {
+            prime = 0;
+            break;
+        }
+    if (prime)
+        printf("Prime");
+    else
+        printf("Not prime");
     return 0;
-}`,`Enter number (0-20): 5
-Factorial = 120`],
+}`,
+    output: `Input: 7
+Prime`
+  },
+  {
+    number: 26,
+    title: "Star Pattern",
+    category: "Loops",
+    description: "Print a simple right-triangle pattern.",
+    code: `#include <stdio.h>
 
-["Prime number","For loop",`#include <stdio.h>
-int main(){
-    int n,i,prime=1;
-    printf("Enter number: ");
-    scanf("%d",&n);
-    if(n<2) prime=0;
-    for(i=2;i<=n/i&&prime;i++)
-        if(n%i==0) prime=0;
-    if(prime) printf("Prime number");
-    else printf("Not a prime number");
-    return 0;
-}`,`Enter number: 7
-Prime number`],
-
-["Star pattern","Nested for loops",`#include <stdio.h>
-int main(){
-    int i,j,n;
-    printf("Enter rows: ");
-    scanf("%d",&n);
-    for(i=1;i<=n;i++){
-        for(j=1;j<=i;j++) printf("* ");
+int main()
+{
+    int i, j;
+    for (i = 1; i <= 5; i++)
+    {
+        for (j = 1; j <= i; j++)
+            printf("* ");
         printf("\\n");
     }
     return 0;
-}`,`Enter rows: 4
-*
+}`,
+    output: `*
 * *
 * * *
-* * * *`],
+* * * *
+* * * * *`
+  },
+  {
+    number: 27,
+    title: "Display Array Elements",
+    category: "Arrays",
+    description: "Read and print five elements of an array.",
+    code: `#include <stdio.h>
 
-["Print array elements","Arrays",`#include <stdio.h>
-int main(){
-    int a[5]={1,2,3,4,5},i;
-    for(i=0;i<5;i++)
-        printf("%d ",a[i]);
+int main()
+{
+    int a[5], i;
+    for (i = 0; i < 5; i++)
+        scanf("%d", &a[i]);
+    for (i = 0; i < 5; i++)
+        printf("%d ", a[i]);
     return 0;
-}`,`1 2 3 4 5`],
+}`,
+    output: `Input: 1 2 3 4 5
+1 2 3 4 5`
+  },
+  {
+    number: 28,
+    title: "Reverse an Array",
+    category: "Arrays",
+    description: "Display array elements in reverse order.",
+    code: `#include <stdio.h>
 
-["Array in reverse order","Arrays",`#include <stdio.h>
-int main(){
-    int a[5]={1,2,3,4,5},i;
-    for(i=4;i>=0;i--)
-        printf("%d ",a[i]);
+int main()
+{
+    int a[5], i;
+    for (i = 0; i < 5; i++)
+        scanf("%d", &a[i]);
+    for (i = 4; i >= 0; i--)
+        printf("%d ", a[i]);
     return 0;
-}`,`5 4 3 2 1`],
+}`,
+    output: `Input: 1 2 3 4 5
+5 4 3 2 1`
+  },
+  {
+    number: 29,
+    title: "Array Sum and Average",
+    category: "Arrays",
+    description: "Calculate the sum and average of five array elements.",
+    code: `#include <stdio.h>
 
-["Sum and average of array","Arrays",`#include <stdio.h>
-int main(){
-    int a[5],i,sum=0;
-    printf("Enter five numbers: ");
-    for(i=0;i<5;i++){
-        scanf("%d",&a[i]);
-        sum=sum+a[i];
+int main()
+{
+    int a[5], i, sum = 0;
+    for (i = 0; i < 5; i++)
+    {
+        scanf("%d", &a[i]);
+        sum += a[i];
     }
-    printf("Sum = %d\\n",sum);
-    printf("Average = %.2f",sum/5.0);
+    printf("Sum = %d\\n", sum);
+    printf("Average = %.2f", sum / 5.0);
     return 0;
-}`,`Enter five numbers: 1 2 3 4 5
-Sum = 15
-Average = 3.00`],
+}`,
+    output: `Input: 2 4 6 8 10
+Sum = 30
+Average = 6.00`
+  },
+  {
+    number: 30,
+    title: "Maximum and Minimum in Array",
+    category: "Arrays",
+    description: "Find the largest and smallest array elements.",
+    code: `#include <stdio.h>
 
-["Maximum and minimum in array","Arrays",`#include <stdio.h>
-int main(){
-    int a[5],i,max,min;
-    printf("Enter five numbers: ");
-    for(i=0;i<5;i++) scanf("%d",&a[i]);
-    max=min=a[0];
-    for(i=1;i<5;i++){
-        if(a[i]>max) max=a[i];
-        if(a[i]<min) min=a[i];
+int main()
+{
+    int a[5], i, max, min;
+    for (i = 0; i < 5; i++)
+        scanf("%d", &a[i]);
+    max = min = a[0];
+    for (i = 1; i < 5; i++)
+    {
+        if (a[i] > max) max = a[i];
+        if (a[i] < min) min = a[i];
     }
-    printf("Maximum = %d\\nMinimum = %d",max,min);
+    printf("Maximum = %d\\nMinimum = %d", max, min);
     return 0;
-}`,`Enter five numbers: 8 2 6 1 9
+}`,
+    output: `Input: 4 8 1 9 3
 Maximum = 9
-Minimum = 1`],
+Minimum = 1`
+  },
+  {
+    number: 31,
+    title: "Count Positive, Negative and Zero",
+    category: "Arrays",
+    description: "Count positive, negative and zero values in an array.",
+    code: `#include <stdio.h>
 
-["Count positive, negative and zero","Arrays",`#include <stdio.h>
-int main(){
-    int a[5],i,p=0,neg=0,z=0;
-    printf("Enter five numbers: ");
-    for(i=0;i<5;i++){
-        scanf("%d",&a[i]);
-        if(a[i]>0) p++;
-        else if(a[i]<0) neg++;
-        else z++;
+int main()
+{
+    int a[5], i, pos = 0, neg = 0, zero = 0;
+    for (i = 0; i < 5; i++)
+    {
+        scanf("%d", &a[i]);
+        if (a[i] > 0) pos++;
+        else if (a[i] < 0) neg++;
+        else zero++;
     }
-    printf("Positive = %d\\nNegative = %d\\nZero = %d",p,neg,z);
+    printf("Positive = %d\\n", pos);
+    printf("Negative = %d\\n", neg);
+    printf("Zero = %d", zero);
     return 0;
-}`,`Enter five numbers: -2 0 3 4 -1
+}`,
+    output: `Input: 1 -2 0 4 -5
 Positive = 2
 Negative = 2
-Zero = 1`],
+Zero = 1`
+  },
+  {
+    number: 32,
+    title: "Count Odd and Even Array Elements",
+    category: "Arrays",
+    description: "Count odd and even elements in an array.",
+    code: `#include <stdio.h>
 
-["Count odd and even array values","Arrays",`#include <stdio.h>
-int main(){
-    int a[5],i,odd=0,even=0;
-    printf("Enter five numbers: ");
-    for(i=0;i<5;i++){
-        scanf("%d",&a[i]);
-        if(a[i]%2==0) even++;
+int main()
+{
+    int a[5], i, odd = 0, even = 0;
+    for (i = 0; i < 5; i++)
+    {
+        scanf("%d", &a[i]);
+        if (a[i] % 2 == 0) even++;
         else odd++;
     }
-    printf("Even = %d\\nOdd = %d",even,odd);
+    printf("Even = %d\\nOdd = %d", even, odd);
     return 0;
-}`,`Enter five numbers: 1 2 3 4 5
+}`,
+    output: `Input: 1 2 3 4 5
 Even = 2
-Odd = 3`],
+Odd = 3`
+  },
+  {
+    number: 33,
+    title: "Multiplication Table",
+    category: "Loops",
+    description: "Print the multiplication table of a number.",
+    code: `#include <stdio.h>
 
-["Multiplication table","For loop",`#include <stdio.h>
-int main(){
-    int n,i;
-    printf("Enter number: ");
-    scanf("%d",&n);
-    for(i=1;i<=10;i++)
-        printf("%d x %d = %d\\n",n,i,n*i);
+int main()
+{
+    int n, i;
+    scanf("%d", &n);
+    for (i = 1; i <= 10; i++)
+        printf("%d x %d = %d\\n", n, i, n * i);
     return 0;
-}`,`Enter number: 5
+}`,
+    output: `Input: 5
 5 x 1 = 5
 5 x 2 = 10
+5 x 3 = 15
 ...
-5 x 10 = 50`],
+5 x 10 = 50`
+  },
+  {
+    number: 34,
+    title: "Sum of Digits",
+    category: "Loops",
+    description: "Calculate the sum of all digits in an integer.",
+    code: `#include <stdio.h>
 
-["Sum of digits","While loop",`#include <stdio.h>
-int main(){
-    int n,sum=0;
-    printf("Enter number: ");
-    scanf("%d",&n);
-    if(n<0) n=-n;
-    while(n>0){
-        sum=sum+n%10;
-        n=n/10;
+int main()
+{
+    int n, sum = 0;
+    scanf("%d", &n);
+    while (n != 0)
+    {
+        sum += n % 10;
+        n /= 10;
     }
-    printf("Sum of digits = %d",sum);
+    printf("Sum = %d", sum);
     return 0;
-}`,`Enter number: 1234
-Sum of digits = 10`]
+}`,
+    output: `Input: 1234
+Sum = 10`
+  }
 ];
 
-var nav=document.getElementById("nav");
-var grid=document.getElementById("programs");
-data.forEach(function(p,i){
- var id=i+1;
- var link=document.createElement("a");
- link.href="#p"+id;link.textContent=String(id).padStart(2,"0");nav.appendChild(link);
+const grid = document.getElementById("programGrid");
+const searchInput = document.getElementById("searchInput");
+const filters = document.getElementById("filters");
+const resultsCount = document.getElementById("resultsCount");
+const emptyState = document.getElementById("emptyState");
+const toast = document.getElementById("toast");
 
- var card=document.createElement("section");
- card.className="card";card.id="p"+id;
- var title=document.createElement("h2");
- title.textContent="Program "+String(id).padStart(2,"0")+" — "+p[0];
- var top=document.createElement("div");
- top.className="tag";top.textContent=p[1];
- var code=document.createElement("pre");code.textContent=p[2];
- var btn=document.createElement("button");btn.textContent="▶ Show Output";
- var output=document.createElement("div");output.className="output";output.hidden=true;
- var outPre=document.createElement("pre");outPre.textContent=p[3];
- output.appendChild(outPre);
- btn.onclick=function(){
-   output.hidden=!output.hidden;
-   btn.textContent=output.hidden?"▶ Show Output":"− Hide Output";
- };
- card.appendChild(top);card.appendChild(title);card.appendChild(code);
- card.appendChild(btn);card.appendChild(output);grid.appendChild(card);
+let activeCategory = "All";
+let toastTimer;
+
+const accents = [
+  "#6cf2ff", "#b29bff", "#ff8bd4",
+  "#9dffcb", "#ffd166", "#ff9b7a"
+];
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, function (char) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[char];
+  });
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () {
+    toast.classList.remove("show");
+  }, 2200);
+}
+
+function renderFilters() {
+  const categories = [
+    "All",
+    ...new Set(programs.map(function (program) {
+      return program.category;
+    }))
+  ];
+
+  filters.innerHTML = categories.map(function (category) {
+    const count = category === "All"
+      ? programs.length
+      : programs.filter(function (program) {
+          return program.category === category;
+        }).length;
+
+    return `
+      <button class="filter-btn ${category === activeCategory ? "active" : ""}"
+        type="button" data-category="${escapeHTML(category)}">
+        ${escapeHTML(category)} <span>${count}</span>
+      </button>
+    `;
+  }).join("");
+}
+
+function cardTemplate(program, index) {
+  const accent = accents[index % accents.length];
+
+  return `
+    <article class="program-card" style="--card-accent:${accent};animation-delay:${(index % 8) * 55}ms">
+      <div class="card-head">
+        <div class="program-number">${String(program.number).padStart(2, "0")}</div>
+        <div class="card-title-wrap">
+          <h3 class="card-title">${escapeHTML(program.title)}</h3>
+          <span class="card-category">${escapeHTML(program.category)}</span>
+        </div>
+      </div>
+      <p class="card-description">${escapeHTML(program.description)}</p>
+
+      <div class="code-panel">
+        <div class="code-toolbar">
+          <div class="window-dots"><i></i><i></i><i></i></div>
+          <span class="code-label">C · SOURCE CODE</span>
+          <button class="copy-btn" type="button" data-copy="${program.number}">Copy code</button>
+        </div>
+        <pre class="code-content"><code>${escapeHTML(program.code)}</code></pre>
+      </div>
+
+      <div class="card-actions">
+        <button class="output-btn" type="button" data-output="${program.number}" aria-expanded="false">
+          <span>▶</span> Show sample output <span class="arrow">⌄</span>
+        </button>
+      </div>
+      <div class="output-panel" id="output-${program.number}">
+        <div class="output-head">Sample console output</div>
+        <pre class="output-content">${escapeHTML(program.output)}</pre>
+      </div>
+    </article>
+  `;
+}
+
+function renderPrograms() {
+  const query = searchInput.value.trim().toLowerCase();
+
+  const filtered = programs.filter(function (program) {
+    const matchesCategory =
+      activeCategory === "All" || program.category === activeCategory;
+
+    const searchable = [
+      program.number,
+      program.title,
+      program.category,
+      program.description,
+      program.code
+    ].join(" ").toLowerCase();
+
+    return matchesCategory && searchable.includes(query);
+  });
+
+  grid.innerHTML = filtered.map(cardTemplate).join("");
+  resultsCount.textContent =
+    filtered.length + (filtered.length === 1 ? " program" : " programs");
+
+  emptyState.classList.toggle("show", filtered.length === 0);
+
+  document.getElementById("totalMetric").textContent = programs.length;
+
+  observeCards();
+}
+
+function observeCards() {
+  const cards = document.querySelectorAll(".program-card");
+
+  if (!("IntersectionObserver" in window)) {
+    cards.forEach(function (card) {
+      card.style.opacity = "1";
+    });
+    return;
+  }
+
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.05,
+    rootMargin: "0px 0px 40px 0px"
+  });
+
+  cards.forEach(function (card) {
+    observer.observe(card);
+  });
+}
+
+filters.addEventListener("click", function (event) {
+  const button = event.target.closest("[data-category]");
+  if (!button) return;
+
+  activeCategory = button.dataset.category;
+  renderFilters();
+  renderPrograms();
 });
+
+searchInput.addEventListener("input", renderPrograms);
+
+document.getElementById("clearSearch").addEventListener("click", function () {
+  searchInput.value = "";
+  activeCategory = "All";
+  renderFilters();
+  renderPrograms();
+});
+
+document.getElementById("expandAll").addEventListener("click", function () {
+  document.querySelectorAll(".output-btn").forEach(function (button) {
+    button.setAttribute("aria-expanded", "true");
+    const panel = document.getElementById("output-" + button.dataset.output);
+    if (panel) panel.classList.add("open");
+  });
+});
+
+document.getElementById("collapseAll").addEventListener("click", function () {
+  document.querySelectorAll(".output-btn").forEach(function (button) {
+    button.setAttribute("aria-expanded", "false");
+    const panel = document.getElementById("output-" + button.dataset.output);
+    if (panel) panel.classList.remove("open");
+  });
+});
+
+grid.addEventListener("click", async function (event) {
+  const outputButton = event.target.closest("[data-output]");
+
+  if (outputButton) {
+    const panel = document.getElementById(
+      "output-" + outputButton.dataset.output
+    );
+
+    const isOpen = panel.classList.toggle("open");
+    outputButton.setAttribute("aria-expanded", String(isOpen));
+    return;
+  }
+
+  const copyButton = event.target.closest("[data-copy]");
+
+  if (copyButton) {
+    const number = Number(copyButton.dataset.copy);
+    const program = programs.find(function (item) {
+      return item.number === number;
+    });
+
+    if (!program) return;
+
+    try {
+      await navigator.clipboard.writeText(program.code);
+      copyButton.textContent = "Copied ✓";
+      copyButton.classList.add("copied");
+      showToast("Program " + number + " copied!");
+
+      setTimeout(function () {
+        copyButton.textContent = "Copy code";
+        copyButton.classList.remove("copied");
+      }, 1600);
+    } catch (error) {
+      const textarea = document.createElement("textarea");
+      textarea.value = program.code;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand("copy");
+        showToast("Program " + number + " copied!");
+      } catch (copyError) {
+        showToast("Copy unavailable — select the code and copy it.");
+      }
+
+      textarea.remove();
+    }
+  }
+});
+
+const scrollProgress = document.getElementById("scrollProgress");
+
+function updateScrollProgress() {
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const percent = scrollable > 0
+    ? (window.scrollY / scrollable) * 100
+    : 0;
+
+  scrollProgress.style.width = percent + "%";
+}
+
+window.addEventListener("scroll", updateScrollProgress, { passive: true });
+window.addEventListener("resize", updateScrollProgress);
+
+renderFilters();
+renderPrograms();
+updateScrollProgress();
 </script>
 </body>
 </html>
