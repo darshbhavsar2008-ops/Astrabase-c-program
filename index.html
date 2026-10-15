@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Programs | 01–32</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;padding:25px;
+ font-family:Arial,sans-serif;color:white;
+ background:linear-gradient(-45deg,#080817,#241044,#06394a,#40102f);
+ background-size:400% 400%;
+ animation:bg 15s ease infinite;
+}
+@keyframes bg{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes gradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+h1{
+ text-align:center;font-size:clamp(35px,7vw,70px);
+ background:linear-gradient(90deg,#b6a0ff,#65edff,#ff83d5,#ffe18a,#b6a0ff);
+ background-size:300%;animation:gradient 7s infinite;
+ color:transparent;background-clip:text;-webkit-background-clip:text;
+}
+header{text-align:center;padding:35px 0}
+header p{color:#c5c5df;line-height:1.7}
+nav{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:25px auto}
+nav a{color:white;text-decoration:none;padding:8px 10px;border:1px solid #ffffff30;border-radius:9px;background:#ffffff12;font-size:12px}
+.grid{max-width:1100px;margin:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{min-width:0;padding:18px;border:1px solid #ffffff30;border-radius:18px;background:#ffffff12;backdrop-filter:blur(20px);box-shadow:0 15px 40px #0003}
+.card h2{font-size:17px;line-height:1.5;background:linear-gradient(90deg,#c4aaff,#80f3ff,#ffa6dc);background-size:200%;animation:gradient 8s infinite;color:transparent;background-clip:text;-webkit-background-clip:text}
+.tag{color:#90efff;font-size:11px;letter-spacing:2px}
+pre{white-space:pre;overflow:auto;background:#050712d9;padding:14px;border-radius:10px;border:1px solid #ffffff16;color:#e5e9ff;font:12px/1.7 Consolas,monospace}
+button{cursor:pointer;border:0;border-radius:9px;padding:10px 13px;background:linear-gradient(110deg,#b7a0ff,#77eaff);color:#11152a;font-weight:bold}
+.output{margin-top:12px;padding:12px;border:1px solid #65ffc455;background:#002d254d;border-radius:10px;color:#9dffd9}
+.output pre{color:#9dffd9}
+footer{text-align:center;padding:30px;color:#c4c4de}
+@media(max-width:700px){body{padding:13px}.grid{grid-template-columns:1fr}.card{padding:14px}}
+</style>
+</head>
+
+<body>
+<header>
+<h1>C PROGRAMS 01–32</h1>
+<p>First Semester Practical Collection<br>
+Classic C • printf • scanf • Conditions • Loops • Arrays</p>
+<p>✦ Animated Gradients · Liquid Glass · Sample Outputs ✦</p>
+</header>
+
+<nav id="nav"></nav>
+<main class="grid" id="programs"></main>
+<footer>✦ C PRACTICALS · ALL 32 PROGRAMS ✦</footer>
+
+<script>
+var data = [
+["Print a message","Basic I/O",`#include <stdio.h>
+int main(){
+    printf("Hello World");
+    return 0;
+}`,`Hello World`],
+
+["Average of five numbers","Basic I/O",`#include <stdio.h>
+int main(){
+    float a,b,c,d,e;
+    printf("Enter five numbers: ");
+    scanf("%f%f%f%f%f",&a,&b,&c,&d,&e);
+    printf("Average = %.2f",(a+b+c+d+e)/5);
+    return 0;
+}`,`Enter five numbers: 10 20 30 40 50
+Average = 30.00`],
+
+["Area of circle","Math",`#include <stdio.h>
+int main(){
+    float r;
+    printf("Enter radius: ");
+    scanf("%f",&r);
+    printf("Area = %.2f",3.14159*r*r);
+    return 0;
+}`,`Enter radius: 2
+Area = 12.57`],
+
+["Convert years into minutes","Math",`#include <stdio.h>
+int main(){
+    int years;
+    printf("Enter years: ");
+    scanf("%d",&years);
+    printf("Minutes = %d",years*365*24*60);
+    return 0;
+}`,`Enter years: 1
+Minutes = 525600`],
+
+["Arithmetic operations","Operators",`#include <stdio.h>
+int main(){
+    int a,b;
+    printf("Enter two numbers: ");
+    scanf("%d%d",&a,&b);
+    printf("Addition = %d\\n",a+b);
+    printf("Subtraction = %d\\n",a-b);
+    printf("Multiplication = %d\\n",a*b);
+    if(b!=0)
+        printf("Division = %.2f",(float)a/b);
+    else
+        printf("Cannot divide by zero");
+    return 0;
+}`,`Enter two numbers: 10 2
+Addition = 12
+Subtraction = 8
+Multiplication = 20
+Division = 5.00`],
+
+["Display a character","Basic I/O",`#include <stdio.h>
+int main(){
+    char ch;
+    printf("Enter character: ");
+    scanf(" %c",&ch);
+    printf("Character = %c",ch);
+    return 0;
+}`,`Enter character: A
+Character = A`],
+
+["Lowercase to uppercase","Characters",`#include <stdio.h>
+int main(){
+    char ch;
+    printf("Enter lowercase letter: ");
+    scanf(" %c",&ch);
+    if(ch>='a' && ch<='z')
+        printf("Uppercase = %c",ch-32);
+    else
+        printf("Not a lowercase letter");
+    return 0;
+}`,`Enter lowercase letter: b
+Uppercase = B`],
+
+["Swap using third variable","Basic I/O",`#include <stdio.h>
+int main(){
+    int a,b,temp;
+    printf("Enter two numbers: ");
+    scanf("%d%d",&a,&b);
+    temp=a;
+    a=b;
+    b=temp;
+    printf("a=%d b=%d",a,b);
+    return 0;
+}`,`Enter two numbers: 4 9
+a=9 b=4`],
+
+["Swap without third variable","Basic I/O",`#include <stdio.h>
+int main(){
+    int a,b;
+    printf("Enter two numbers: ");
+    scanf("%d%d",&a,&b);
+    a=a^b;
+    b=a^b;
+    a=a^b;
+    printf("a=%d b=%d",a,b);
+    return 0;
+}`,`Enter two numbers: 4 9
+a=9 b=4`],
+
+["Maximum and minimum","Conditions",`#include <stdio.h>
+int main(){
+    int a,b;
+    printf("Enter two numbers: ");
+    scanf("%d%d",&a,&b);
+    printf("Maximum = %d\\n",(a>b)?a:b);
+    printf("Minimum = %d",(a<b)?a:b);
+    return 0;
+}`,`Enter two numbers: 8 3
+Maximum = 8
+Minimum = 3`],
+
+["Bitwise operators","Operators",`#include <stdio.h>
+int main(){
+    int a,b;
+    printf("Enter two numbers: ");
+    scanf("%d%d",&a,&b);
+    printf("AND = %d\\n",a&b);
+    printf("OR = %d\\n",a|b);
+    printf("XOR = %d",a^b);
+    return 0;
+}`,`Enter two numbers: 5 3
+AND = 1
+OR = 7
+XOR = 6`],
+
+["Odd or even","If-else",`#include <stdio.h>
+int main(){
+    int n;
+    printf("Enter number: ");
+    scanf("%d",&n);
+    if(n%2==0)
+        printf("Even number");
+    else
+        printf("Odd number");
+    return 0;
+}`,`Enter number: 7
+Odd number`],
+
+["Alphabet, digit or symbol","If-else",`#include <stdio.h>
+int main(){
+    char ch;
+    printf("Enter character: ");
+    scanf(" %c",&ch);
+    if((ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z'))
+        printf("Alphabet");
+    else if(ch>='0'&&ch<='9')
+        printf("Digit");
+    else
+        printf("Special symbol");
+    return 0;
+}`,`Enter character: 7
+Digit`],
+
+["Leap year","Conditions",`#include <stdio.h>
+int main(){
+    int year;
+    printf("Enter year: ");
+    scanf("%d",&year);
+    if(year%400==0||(year%4==0&&year%100!=0))
+        printf("Leap year");
+    else
+        printf("Not a leap year");
+    return 0;
+}`,`Enter year: 2024
+Leap year`],
+
+["Days in a month","Switch",`#include <stdio.h>
+int main(){
+    int m;
+    printf("Enter month (1-12): ");
+    scanf("%d",&m);
+    switch(m){
+        case 1:case 3:case 5:case 7:case 8:case 10:case 12:
+            printf("31 days");break;
+        case 4:case 6:case 9:case 11:
+            printf("30 days");break;
+        case 2:printf("28 or 29 days");break;
+        default:printf("Invalid month");
+    }
+    return 0;
+}`,`Enter month (1-12): 4
+30 days`],
+
+["Vowel or consonant","Switch",`#include <stdio.h>
+int main(){
+    char ch;
+    printf("Enter letter: ");
+    scanf(" %c",&ch);
+    if(ch>='A'&&ch<='Z') ch=ch+32;
+    switch(ch){
+        case 'a':case 'e':case 'i':case 'o':case 'u':
+            printf("Vowel");break;
+        default:
+            if(ch>='a'&&ch<='z') printf("Consonant");
+            else printf("Not a letter");
+    }
+    return 0;
+}`,`Enter letter: e
+Vowel`],
+
+["Maximum of three numbers","If-else",`#include <stdio.h>
+int main(){
+    int a,b,c;
+    printf("Enter three numbers: ");
+    scanf("%d%d%d",&a,&b,&c);
+    if(a>=b&&a>=c) printf("Maximum = %d",a);
+    else if(b>=a&&b>=c) printf("Maximum = %d",b);
+    else printf("Maximum = %d",c);
+    return 0;
+}`,`Enter three numbers: 5 12 8
+Maximum = 12`],
+
+["Grade from marks","If-else",`#include <stdio.h>
+int main(){
+    int marks;
+    printf("Enter marks: ");
+    scanf("%d",&marks);
+    if(marks<0||marks>100) printf("Invalid marks");
+    else if(marks>=90) printf("Grade A");
+    else if(marks>=80) printf("Grade B");
+    else if(marks>=70) printf("Grade C");
+    else if(marks>=60) printf("Grade D");
+    else if(marks>=40) printf("Grade E");
+    else printf("Fail");
+    return 0;
+}`,`Enter marks: 85
+Grade B`],
+
+["Print 1 to 10 using goto","Goto",`#include <stdio.h>
+int main(){
+    int i=1;
+start:
+    if(i<=10){
+        printf("%d ",i);
+        i++;
+        goto start;
+    }
+    return 0;
+}`,`1 2 3 4 5 6 7 8 9 10`],
+
+["Sum of first n integers using goto","Goto",`#include <stdio.h>
+int main(){
+    int n,i=1,sum=0;
+    printf("Enter n: ");
+    scanf("%d",&n);
+start:
+    if(i<=n){
+        sum=sum+i;
+        i++;
+        goto start;
+    }
+    printf("Sum = %d",sum);
+    return 0;
+}`,`Enter n: 5
+Sum = 15`],
+
+["Reverse a number","While loop",`#include <stdio.h>
+int main(){
+    int n,rev=0,digit;
+    printf("Enter number: ");
+    scanf("%d",&n);
+    while(n!=0){
+        digit=n%10;
+        rev=rev*10+digit;
+        n=n/10;
+    }
+    printf("Reverse = %d",rev);
+    return 0;
+}`,`Enter number: 123
+Reverse = 321`],
+
+["Armstrong number","Loops",`#include <stdio.h>
+int main(){
+    int n,temp,digit,sum=0;
+    printf("Enter a three-digit number: ");
+    scanf("%d",&n);
+    temp=n;
+    while(temp!=0){
+        digit=temp%10;
+        sum=sum+digit*digit*digit;
+        temp=temp/10;
+    }
+    if(sum==n) printf("Armstrong number");
+    else printf("Not an Armstrong number");
+    return 0;
+}`,`Enter a three-digit number: 153
+Armstrong number`],
+
+["Palindrome number","While loop",`#include <stdio.h>
+int main(){
+    int n,temp,rev=0,digit;
+    printf("Enter number: ");
+    scanf("%d",&n);
+    temp=n;
+    while(temp>0){
+        digit=temp%10;
+        rev=rev*10+digit;
+        temp=temp/10;
+    }
+    if(n==rev) printf("Palindrome number");
+    else printf("Not a palindrome number");
+    return 0;
+}`,`Enter number: 121
+Palindrome number`],
+
+["Factorial using for loop","For loop",`#include <stdio.h>
+int main(){
+    int n,i;
+    long long fact=1;
+    printf("Enter number (0-20): ");
+    scanf("%d",&n);
+    if(n<0||n>20){
+        printf("Enter a number from 0 to 20");
+        return 0;
+    }
+    for(i=1;i<=n;i++)
+        fact=fact*i;
+    printf("Factorial = %lld",fact);
+    return 0;
+}`,`Enter number (0-20): 5
+Factorial = 120`],
+
+["Prime number","For loop",`#include <stdio.h>
+int main(){
+    int n,i,prime=1;
+    printf("Enter number: ");
+    scanf("%d",&n);
+    if(n<2) prime=0;
+    for(i=2;i<=n/i&&prime;i++)
+        if(n%i==0) prime=0;
+    if(prime) printf("Prime number");
+    else printf("Not a prime number");
+    return 0;
+}`,`Enter number: 7
+Prime number`],
+
+["Star pattern","Nested for loops",`#include <stdio.h>
+int main(){
+    int i,j,n;
+    printf("Enter rows: ");
+    scanf("%d",&n);
+    for(i=1;i<=n;i++){
+        for(j=1;j<=i;j++) printf("* ");
+        printf("\\n");
+    }
+    return 0;
+}`,`Enter rows: 4
+*
+* *
+* * *
+* * * *`],
+
+["Print array elements","Arrays",`#include <stdio.h>
+int main(){
+    int a[5]={1,2,3,4,5},i;
+    for(i=0;i<5;i++)
+        printf("%d ",a[i]);
+    return 0;
+}`,`1 2 3 4 5`],
+
+["Array in reverse order","Arrays",`#include <stdio.h>
+int main(){
+    int a[5]={1,2,3,4,5},i;
+    for(i=4;i>=0;i--)
+        printf("%d ",a[i]);
+    return 0;
+}`,`5 4 3 2 1`],
+
+["Sum and average of array","Arrays",`#include <stdio.h>
+int main(){
+    int a[5],i,sum=0;
+    printf("Enter five numbers: ");
+    for(i=0;i<5;i++){
+        scanf("%d",&a[i]);
+        sum=sum+a[i];
+    }
+    printf("Sum = %d\\n",sum);
+    printf("Average = %.2f",sum/5.0);
+    return 0;
+}`,`Enter five numbers: 1 2 3 4 5
+Sum = 15
+Average = 3.00`],
+
+["Maximum and minimum in array","Arrays",`#include <stdio.h>
+int main(){
+    int a[5],i,max,min;
+    printf("Enter five numbers: ");
+    for(i=0;i<5;i++) scanf("%d",&a[i]);
+    max=min=a[0];
+    for(i=1;i<5;i++){
+        if(a[i]>max) max=a[i];
+        if(a[i]<min) min=a[i];
+    }
+    printf("Maximum = %d\\nMinimum = %d",max,min);
+    return 0;
+}`,`Enter five numbers: 8 2 6 1 9
+Maximum = 9
+Minimum = 1`],
+
+["Count positive, negative and zero","Arrays",`#include <stdio.h>
+int main(){
+    int a[5],i,p=0,neg=0,z=0;
+    printf("Enter five numbers: ");
+    for(i=0;i<5;i++){
+        scanf("%d",&a[i]);
+        if(a[i]>0) p++;
+        else if(a[i]<0) neg++;
+        else z++;
+    }
+    printf("Positive = %d\\nNegative = %d\\nZero = %d",p,neg,z);
+    return 0;
+}`,`Enter five numbers: -2 0 3 4 -1
+Positive = 2
+Negative = 2
+Zero = 1`],
+
+["Count odd and even array values","Arrays",`#include <stdio.h>
+int main(){
+    int a[5],i,odd=0,even=0;
+    printf("Enter five numbers: ");
+    for(i=0;i<5;i++){
+        scanf("%d",&a[i]);
+        if(a[i]%2==0) even++;
+        else odd++;
+    }
+    printf("Even = %d\\nOdd = %d",even,odd);
+    return 0;
+}`,`Enter five numbers: 1 2 3 4 5
+Even = 2
+Odd = 3`],
+
+["Multiplication table","For loop",`#include <stdio.h>
+int main(){
+    int n,i;
+    printf("Enter number: ");
+    scanf("%d",&n);
+    for(i=1;i<=10;i++)
+        printf("%d x %d = %d\\n",n,i,n*i);
+    return 0;
+}`,`Enter number: 5
+5 x 1 = 5
+5 x 2 = 10
+...
+5 x 10 = 50`],
+
+["Sum of digits","While loop",`#include <stdio.h>
+int main(){
+    int n,sum=0;
+    printf("Enter number: ");
+    scanf("%d",&n);
+    if(n<0) n=-n;
+    while(n>0){
+        sum=sum+n%10;
+        n=n/10;
+    }
+    printf("Sum of digits = %d",sum);
+    return 0;
+}`,`Enter number: 1234
+Sum of digits = 10`]
+];
+
+var nav=document.getElementById("nav");
+var grid=document.getElementById("programs");
+data.forEach(function(p,i){
+ var id=i+1;
+ var link=document.createElement("a");
+ link.href="#p"+id;link.textContent=String(id).padStart(2,"0");nav.appendChild(link);
+
+ var card=document.createElement("section");
+ card.className="card";card.id="p"+id;
+ var title=document.createElement("h2");
+ title.textContent="Program "+String(id).padStart(2,"0")+" — "+p[0];
+ var top=document.createElement("div");
+ top.className="tag";top.textContent=p[1];
+ var code=document.createElement("pre");code.textContent=p[2];
+ var btn=document.createElement("button");btn.textContent="▶ Show Output";
+ var output=document.createElement("div");output.className="output";output.hidden=true;
+ var outPre=document.createElement("pre");outPre.textContent=p[3];
+ output.appendChild(outPre);
+ btn.onclick=function(){
+   output.hidden=!output.hidden;
+   btn.textContent=output.hidden?"▶ Show Output":"− Hide Output";
+ };
+ card.appendChild(top);card.appendChild(title);card.appendChild(code);
+ card.appendChild(btn);card.appendChild(output);grid.appendChild(card);
+});
+</script>
+</body>
+</html>
